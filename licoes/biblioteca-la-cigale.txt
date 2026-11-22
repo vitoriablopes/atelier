@@ -1,0 +1,72 @@
+// Texto de exemplo da Biblioteca (obra em domínio público).
+@tipo: biblioteca
+@titulo: La Cigale et la Fourmi
+@idioma: fr
+@nivel: B1
+@autor: Jean de La Fontaine
+@obra: Fables, Livro I, fábula 1 (1668)
+@fonte: Jean de La Fontaine, Fables (1668) — domínio público
+@temas: literatura, fábula, animais
+@gramatica: passé simple, imparfait, imperativo
+@tempo: 10
+@descricao: A fábula mais famosa da França: a cigarra que cantou o verão inteiro e a formiga que não empresta nada.
+
+== TEXTO | La Cigale et la Fourmi
+La Cigale, ((ayant chanté|particípio composto: "tendo cantado", ação anterior à principal))
+Tout l'été,
+((Se trouva|passé simple de se trouver: o passado dos livros e contos)) fort {dépourvue|desprovida, sem nada}
+Quand {la bise|o vento frio do norte (o inverno)} ((fut venue|passé antérieur: ação logo anterior a outra no passado)) :
+Pas un seul petit {morceau|pedaço}
+De mouche ou de {vermisseau|minhoquinha}.
+~ A Cigarra, tendo cantado / O verão inteiro, / Viu-se totalmente desprovida / Quando o vento frio chegou: / Nem um só pedacinho / De mosca ou de minhoquinha.
+
+Elle ((alla|passé simple de aller)) {crier famine|reclamar de fome}
+Chez la Fourmi sa {voisine|vizinha},
+La priant de lui {prêter|emprestar}
+Quelque grain pour {subsister|sobreviver}
+Jusqu'à la saison nouvelle.
+« Je vous ((paierai|futur simple de payer: "pagarei")), lui dit-elle,
+Avant l'Oût, {foi d'animal|palavra de animal (eu juro)},
+Intérêt et principal. »
+~ Foi clamar de fome / Na casa da Formiga, sua vizinha, / Pedindo-lhe que lhe emprestasse / Algum grão para sobreviver / Até a nova estação. / "Eu lhe pagarei", disse ela, / "Antes de agosto, palavra de animal, / Juros e principal."
+
+La Fourmi n'est pas {prêteuse|que gosta de emprestar} :
+C'est là son moindre {défaut|defeito}.
+« ((Que faisiez-vous|imparfait de faire: ação contínua ou habitual no passado)) au temps chaud ?
+Dit-elle à cette {emprunteuse|pedinte, quem pede emprestado}.
+— Nuit et jour {à tout venant|para quem passasse}
+((Je chantais|imparfait de chanter)), {ne vous déplaise|com sua licença}.
+— Vous chantiez ? j'en suis {fort aise|muito contente}.
+Eh bien ! ((dansez|imperativo de danser, forma vous: "dancem / dance")) maintenant. »
+~ A Formiga não gosta de emprestar: / Esse é o menor de seus defeitos. / "O que você fazia no tempo quente?" / Disse ela a essa pedinte. / "— Noite e dia, para quem passasse, / Eu cantava, com sua licença." / "— Você cantava? Fico muito contente. / Pois bem! Agora dance."
+
+== VOCAB | Glossário
+la cigale | a cigarra | 🦗 | subst. f. | La Cigale, ayant chanté tout l'été. = A Cigarra, tendo cantado o verão inteiro.
+la fourmi | a formiga | 🐜 | subst. f.
+la bise | o vento frio do norte | 🌬️ | subst. f.
+la voisine | a vizinha | - | subst. f.
+prêter | emprestar | - | verbo | La priant de lui prêter quelque grain. = Pedindo-lhe que lhe emprestasse algum grão.
+le défaut | o defeito | - | subst. m. | C'est là son moindre défaut. = Esse é o menor de seus defeitos.
+dépourvu | desprovido, sem nada | - | adj.
+
+== GRAMATICA | Notas de leitura
+O **passé simple** é o passado dos livros, contos e fábulas: quase não se usa na fala, mas é essencial para ler.
+> Elle alla crier famine. = Ela foi clamar de fome.
+O **imparfait** descreve o que acontecia ou se repetia no passado.
+> Que faisiez-vous au temps chaud ? = O que você fazia no tempo quente?
+! A moral irônica está no imperativo final: *dansez maintenant* — "agora dance".
+
+== EXERCICIOS | Compreensão
+[escolha] O que a Cigarra pede à Formiga?
+* Alguns grãos emprestados
+- Um lugar para dormir
+- Uma canção nova
+[vf] A Formiga gosta de emprestar.
+= falso
+> "La Fourmi n'est pas prêteuse."
+[escolha] "Elle alla" está em qual tempo verbal?
+* passé simple
+- imparfait
+- futur simple
+[escrever] Como se diz "emprestar" em francês?
+= prêter

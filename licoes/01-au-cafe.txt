@@ -1,0 +1,133 @@
+// Lição de exemplo — mostra todos os tipos de bloco.
+// Linhas que começam com // são comentários e são ignoradas.
+@titulo: Au café
+@idioma: fr
+@nivel: A1
+@unidade: 1 · Le quotidien
+@temas: comida, café, cotidiano
+@gramatica: verbo vouloir (presente), artigos indefinidos, pedir com educação (je voudrais)
+@tempo: 20
+@descricao: Pedir algo num café com educação e conhecer o verbo vouloir.
+
+== TEXTO | Un matin à Paris
+Ce matin, Claire entre dans un petit {café|café (o lugar)} près de la {gare|estação de trem}. Il fait froid et elle a {envie de|vontade de} quelque chose de chaud.
+~ Esta manhã, Claire entra em um pequeno café perto da estação de trem. Está frio e ela tem vontade de algo quente.
+
+Le {serveur|garçom} est très {gentil|gentil, simpático}. Claire {commande|pede} un {café crème|café com leite} et un {croissant}. Elle {paie|paga} trois euros cinquante.
+~ O garçom é muito gentil. Claire pede um café com leite e um croissant. Ela paga três euros e cinquenta.
+@fonte: Texto original, escrito para esta lição
+
+== AUDIO | Au comptoir
+Serveur: Bonjour madame, qu'est-ce que je vous sers ? = Bom dia, senhora, o que vou lhe servir?
+Claire: Bonjour ! Je voudrais un café crème, s'il vous plaît. = Bom dia! Eu gostaria de um café com leite, por favor.
+Serveur: Et avec ceci ? = E o que mais?
+Claire: Un croissant, s'il vous plaît. C'est combien ? = Um croissant, por favor. Quanto é?
+Serveur: Trois euros cinquante. = Três euros e cinquenta.
+Claire: Voilà. Merci, bonne journée ! = Aqui está. Obrigada, bom dia!
+@fonte: Diálogo original, escrito para esta lição
+
+== GRAMATICA | Pedir com educação: je voudrais
+Em francês, para pedir algo com educação usamos **je voudrais** (eu gostaria), e não *je veux* (eu quero), que soa direto demais.
+> Je voudrais un thé, s'il vous plaît. = Eu gostaria de um chá, por favor.
+> Je voudrais l'addition. = Eu gostaria da conta.
+
+### Artigos indefinidos
+| | masculino | feminino |
+|---|---|---|
+| singular | un café | une baguette |
+| plural | des cafés | des baguettes |
+
+! Dica: *s'il vous plaît* é a forma educada (vous); com amigos se diz *s'il te plaît*.
+!! Atenção: em francês há espaço antes de ? ! : e ;
+
+== CONJUGACAO | vouloir — presente
+@verbo: vouloir = querer
+@tempo: présent
+je | veux = eu quero
+tu | veux = você quer (informal)
+il / elle | veut = ele / ela quer
+nous | voulons = nós queremos
+vous | voulez = vocês querem / o senhor quer
+ils / elles | veulent = eles / elas querem
+
+== VOCAB | Au café
+le café | o café | ☕ | subst. m. | Je bois un café le matin. = Eu bebo um café de manhã.
+le croissant | o croissant | 🥐 | subst. m. | Un croissant, s'il vous plaît. = Um croissant, por favor.
+le thé | o chá | 🍵 | subst. m.
+l'eau | a água | 💧 | subst. f. | Une carafe d'eau, s'il vous plaît. = Uma jarra de água, por favor. | Feminino: l'eau est froide.
+le serveur | o garçom | - | subst. m. | - | Feminino: la serveuse.
+l'addition | a conta | 🧾 | subst. f. | L'addition, s'il vous plaît ! = A conta, por favor!
+chaud | quente | 🔥 | adj. | Le café est chaud. = O café está quente.
+
+== EXPRESSOES | Para sobreviver no café
+s'il vous plaît = por favor | formal ou para várias pessoas
+et avec ceci ? = e o que mais? | o garçom pergunta se você quer algo mais
+c'est combien ? = quanto é?
+bonne journée = tenha um bom dia | ao se despedir, durante o dia
+
+== PRONUNCIA | O som do "u" francês
+tu | [ty] | Diga "i" com os lábios em bico, como para assobiar.
+du café | [dy kafe] | O "u" não é o nosso "u".
+bonjour | [bɔ̃ʒuʁ] | "ou" francês = nosso "u".
+
+== CULTURA | O café francês
+Na França, um *café* sozinho é um espresso pequeno. Se quiser leite, peça um **café crème** ou um **café au lait** (mais comum em casa).
+- Beber no balcão (*au comptoir*) costuma ser mais barato do que na mesa.
+- É educado sempre começar com *Bonjour* antes de pedir.
+
+== EXERCICIOS | Prática
+[escolha] Qual é a forma mais educada de pedir um café?
+* Je voudrais un café, s'il vous plaît.
+- Je veux un café.
+- Donne-moi un café.
+> "Je voudrais" (eu gostaria) é a forma educada de pedir.
+
+[ouvir] Je voudrais un thé, s'il vous plaît.
+* Eu gostaria de um chá, por favor.
+- Eu gostaria de um café, por favor.
+- Eu quero a conta, por favor.
+
+[completar] Bonjour ! Je [[voudrais]] un croissant, s'il vous [[plaît|plait]].
+~ Bom dia! Eu gostaria de um croissant, por favor.
+
+[completar] Nous ___ deux cafés.
+* voulons
+- voulez
+- veux
+> Com "nous", vouloir fica "voulons".
+
+[escrever] Como se diz "a conta" em francês?
+= l'addition | addition
+? Começa com "l'a…"
+
+[traduzir] Quanto é?
+= C'est combien ? | Combien ça coûte ?
+
+[ordenar] Je / voudrais / un café / s'il vous plaît
+~ Eu gostaria de um café, por favor.
+
+[associar] Associe as palavras
+le thé = o chá
+l'eau = a água
+le serveur = o garçom
+chaud = quente
+
+[ditado] Un café crème, s'il vous plaît.
+
+[vf] Claire paie trois euros cinquante.
+= verdadeiro
+> Está no texto: "Elle paie trois euros cinquante."
+
+== ESCRITA | Sua vez
+Escreva 2 ou 3 frases pedindo algo num café em Paris.
+? Começar com "Bonjour"
+? Usar "je voudrais"
+? Terminar com "s'il vous plaît" ou "merci"
+= Bonjour ! Je voudrais un thé et un croissant, s'il vous plaît. Merci !
+~ Bom dia! Eu gostaria de um chá e um croissant, por favor. Obrigada!
+
+== RESUMO
+- **Je voudrais** + coisa = pedir com educação.
+- **S'il vous plaît** = por favor (formal).
+- **C'est combien ?** = quanto é?
+- Vouloir: je veux, tu veux, il veut, nous voulons, vous voulez, ils veulent.

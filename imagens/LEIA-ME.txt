@@ -1,0 +1,3 @@
+Coloque aqui as imagens das lições (jpg, png, webp...).
+No código da lição, use img:nome-do-arquivo.jpg
+Exemplo: le croissant | o croissant | img:croissant.jpg | subst. m.

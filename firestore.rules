@@ -1,0 +1,28 @@
+rules_version = '2';
+// Regras do banco (Firestore). Cole no Console do Firebase › Firestore › Regras › Publicar.
+// Troque SEU-EMAIL@gmail.com pelo e-mail que você usa para entrar no app (o mesmo de js/config.js).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function ehAdmin() {
+      return request.auth != null && request.auth.token.email in ['SEU-EMAIL@gmail.com'];
+    }
+
+    // Lições: qualquer pessoa lê; só a administradora cria/edita/apaga.
+    match /licoes/{id} {
+      allow read: if true;
+      allow write: if ehAdmin();
+    }
+
+    // Ordem da trilha (definida pela administradora).
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if ehAdmin();
+    }
+
+    // Progresso: cada pessoa lê e escreve só o próprio.
+    match /usuarios/{uid}/{documento=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
