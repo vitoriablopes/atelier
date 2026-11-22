@@ -17,4 +17,4 @@ export const CONFIG = {
 },
 
   admins: ['biaferreira310@gmail.com'],
-}
+};
