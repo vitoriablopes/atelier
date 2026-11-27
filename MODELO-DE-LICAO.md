@@ -35,7 +35,8 @@ Uma lição é **texto puro**. O app lê esse texto e monta sozinho a leitura co
 | `@gramatica` | Tópicos gramaticais (passé composé, artigos…), separados por vírgula. Filtro na Trilha. |
 | `@tempo` | Duração estimada, em minutos. |
 | `@descricao` | Uma frase sobre o objetivo da lição. |
-| `@tipo` | Só para textos da Biblioteca: "@tipo: biblioteca". Sem isso, é uma lição da Trilha. |
+| `@codigo` | Opcional. Código da aula na ementa (ex.: A0.01). Define a ordem dentro do nível e permite substituir a aula ao reimportar. |
+| `@tipo` | Sem isso, é uma lição da Trilha. "biblioteca" = texto da Biblioteca; "exercicios" = bateria de exercícios; "nivel" = arquivo com nome, objetivos e marco de um nível. |
 | `@autor / @obra` | Biblioteca: autor(a) e obra de onde o texto foi tirado. |
 | `@fonte` | Fonte geral (obra, página, link). Também pode ir dentro de cada bloco TEXTO. |
 
@@ -193,7 +194,7 @@ Legenda opcional.
 
 - Aceita links youtube.com/watch, youtu.be e shorts (com ?t=segundos para começar num ponto).
 
-### 2.12 EXERCICIOS — prática (9 tipos)
+### 2.12 EXERCICIOS — prática (13 tipos)
 
 ```
 == EXERCICIOS | Prática
@@ -236,12 +237,25 @@ chaud = quente
 [vf] Afirmação sobre o texto.
 = verdadeiro
 > Por quê.
+
+[conjugar] Hier, nous [[avons mangé]] (manger, passé composé) au restaurant.
+
+[pronome] Tu connais Marie ? Oui, je [[la]] connais.
+
+[transformar] Passe para a negativa: Je mange du pain.
+= Je ne mange pas de pain
+
+[corrigir] Elle a allé au marché.
+= Elle est allée au marché
+> Aller usa o auxiliar être.
 ```
 
 - Cada exercício começa com [tipo]. * = alternativa certa, - = errada, = = resposta aceita (várias com |), > = explicação, ~ = contexto, ? = dica.
 - [completar]: lacunas com [[resposta|alternativa]] dentro da frase, ou ___ com "= resp1 ; resp2" (uma por lacuna, separadas por ;), ou ___ com alternativas * e -.
 - [ordenar]: escreva as partes NA ORDEM CERTA separadas por / — o app embaralha.
 - [vf]: = verdadeiro ou = falso.
+- [conjugar] e [pronome] funcionam como [completar]: a resposta vai entre [[ ]]; no [conjugar], ponha o infinitivo (e o tempo) entre parênteses depois da lacuna.
+- [transformar] e [corrigir] funcionam como [escrever]: instrução/frase na linha e "= resposta | alternativas".
 - Na correção, o app perdoa maiúsculas, pontuação e apóstrofo; acento faltando ou 1 letra trocada conta como "quase".
 - Os que a aluna erra voltam no fim do bloco e ficam no Caderno de erros.
 
@@ -412,6 +426,17 @@ chaud = quente
 [vf] Afirmação sobre o texto.
 = verdadeiro
 > Por quê.
+
+[conjugar] Hier, nous [[avons mangé]] (manger, passé composé) au restaurant.
+
+[pronome] Tu connais Marie ? Oui, je [[la]] connais.
+
+[transformar] Passe para a negativa: Je mange du pain.
+= Je ne mange pas de pain
+
+[corrigir] Elle a allé au marché.
+= Elle est allée au marché
+> Aller usa o auxiliar être.
 
 == ESCRITA | Sua vez
 Enunciado: o que a aluna deve escrever.
@@ -676,7 +701,187 @@ Explicação dos pontos gramaticais destacados, com > exemplos tirados do texto 
 REGRAS GERAIS: metadados no topo, um por linha (@tipo: biblioteca é obrigatório). Cada bloco começa com "== TIPO | título". Linha em branco separa parágrafos. **negrito** e *itálico* são permitidos. Não use { } nem (( )) para outra coisa.
 ```
 
-## 7. Prompt para gerar lições com IA
+## 7. Curso inteiro a partir de uma ementa (em lotes, .zip)
+
+No app: **Estúdio › Prompt para IA › Curso inteiro em lotes (.zip)**. Cole a ementa (uma aula por linha: `código <tab> tópico gramatical <tab> tema`, depois os conteúdos complementares e o marco), escolha quantas aulas por lote e copie o prompt. A IA primeiro mostra o plano do curso e espera seu “ok”; depois entrega um .zip por lote. Importe os .zip em **Estúdio › Lições › Importar arquivos** (pode selecionar vários de uma vez). Reimportar uma aula com o mesmo `@codigo` substitui a antiga, mantendo o progresso.
+
+Se a IA não conseguir criar arquivos, ela entrega cada aula num bloco precedido de `===== ARQUIVO: nome.txt =====`: copie tudo e use **Estúdio › Lições › Colar lições**.
+
+### Arquivo de nível (`@tipo: nivel`)
+
+Define nome, objetivos, marco de conclusão e conteúdos complementares de um nível (aparecem na Trilha). Também dá para editar direto em **Trilha › Editar trilha › Editar nível**.
+
+```
+@tipo: nivel
+@idioma: fr
+@nivel: A0
+@titulo: Nome do nível (ex.: Primeiros passos)
+@descricao: Uma frase sobre o nível.
+
+== OBJETIVOS
+- O que a aluna consegue fazer ao fim do nível (3–6 itens)
+
+== MARCO
+O marco de conclusão do nível, em uma ou duas frases.
+
+== COMPLEMENTOS
+- Conteúdo complementar 1 (ex.: alfabeto e nomes das letras)
+- Conteúdo complementar 2
+```
+
+### Prompt (versão para preencher à mão)
+
+```
+Você vai montar um CURSO para o meu app de idiomas a partir da ementa abaixo. Cada aula vira um arquivo .txt no formato do app, e os arquivos são entregues em .zip, em LOTES, para manter a qualidade.
+
+IDIOMA: [código: fr / es / it / de / en / ja…]
+DURAÇÃO DE CADA AULA: 20 minutos
+AULAS POR LOTE: 3
+
+EMENTA:
+"""
+[cole aqui a ementa: uma aula por linha, no formato CÓDIGO <tab> TÓPICO GRAMATICAL <tab> TEMA, e depois os conteúdos complementares e o marco de conclusão]
+"""
+
+COMO LER A EMENTA
+- Cada linha "CÓDIGO — tópico gramatical — tema" (separados por tab, | ou ;) é UMA aula. O código vai no metadado @codigo e define o nível (A0.03 → @nivel: A0) e a ordem.
+- O tópico gramatical da linha é o foco da GRAMATICA da aula e vai em @gramatica. O tema da linha guia o texto, o diálogo e o vocabulário e vai em @temas (2–4 palavras-chave).
+- "Conteúdos complementares" (ex.: pronúncia) devem ser TODOS cobertos ao longo das aulas, em ordem lógica, 1 ou 2 por aula, sem tomar o lugar da gramática principal (use o bloco PRONUNCIA, NOTA ou CULTURA para eles).
+- "Marco de conclusão" é o objetivo final do nível: as aulas devem convergir para ele, e a aula de revisão final treina exatamente esse marco.
+
+ETAPA 1 — PLANO (faça isto primeiro e ESPERE meu "ok" antes de escrever as aulas)
+Responda com uma tabela: código | título (curto, no idioma estudado) | gramática | tema | conteúdo complementar da aula | 8–15 palavras novas principais | gênero do texto/diálogo. Garanta progressão real: cada aula só usa a gramática já vista ou a da própria aula; o vocabulário das aulas anteriores é reciclado; nenhuma palavra nova se repete como "nova" em duas aulas. Diga como as aulas ficarão divididas em lotes de 3.
+
+ETAPA 2 — LOTES
+- Para cada lote, crie um arquivo .zip para download chamado "curso-<idioma>-<nível>-lote<N>.zip", com UM arquivo .txt (UTF-8) por aula, nomeado "<código>-<slug-do-título>.txt" (ex.: A0.01-salutations.txt). Sem pastas dentro do zip.
+- No PRIMEIRO lote, inclua também o arquivo do nível, "_nivel-<idioma>-<nível>.txt", no formato de nível abaixo (objetivos, marco de conclusão e conteúdos complementares tirados da ementa).
+- No ÚLTIMO lote, inclua uma aula de revisão do nível, código "<nível>.R" (ex.: A0.R), que retoma toda a gramática e o vocabulário do nível e termina com uma ESCRITA que cumpre o marco de conclusão.
+- Depois de cada lote, liste as aulas entregues e pare. Continue só quando eu disser "próximo".
+- Se você NÃO conseguir criar arquivos, entregue cada aula em um bloco de código separado, cada um precedido da linha exata
+  ===== ARQUIVO: <nome-do-arquivo>.txt =====
+  (o app importa colando o texto inteiro assim).
+- Se precisar corrigir uma aula depois, gere de novo o arquivo com o MESMO @codigo: o app substitui a antiga.
+
+QUALIDADE — igual à de uma aula feita sozinha
+- Não encurte, não resuma e não simplifique as aulas por estarem em lote. Cada aula deve ser completa por si só.
+- Se o lote ficar grande demais para manter essa qualidade, entregue menos aulas naquele lote e avise.
+- Confira cada arquivo antes de entregar: metadados completos, blocos com "== TIPO | título", exercícios com resposta, fonte em todo TEXTO, e nada fora do formato.
+
+METADADOS DE CADA AULA (no topo do arquivo, um por linha)
+@titulo: (curto, no idioma estudado)
+@codigo: (o código da ementa, ex.: A0.01)
+@idioma: <código>
+@nivel: (do código, ex.: A0)
+@unidade: (opcional — só se a ementa agrupar aulas; senão omita)
+@temas: (2–4 palavras-chave do tema da linha, separadas por vírgula)
+@gramatica: (o tópico gramatical da linha, resumido — a vírgula separa tópicos diferentes, então não liste exemplos aqui; ex.: "pronomes pessoais sujeitos")
+@tempo: 20
+@descricao: (uma frase sobre o objetivo da aula)
+
+FORMATO DO ARQUIVO DE NÍVEL
+@tipo: nivel
+@idioma: fr
+@nivel: A0
+@titulo: Nome do nível (ex.: Primeiros passos)
+@descricao: Uma frase sobre o nível.
+
+== OBJETIVOS
+- O que a aluna consegue fazer ao fim do nível (3–6 itens)
+
+== MARCO
+O marco de conclusão do nível, em uma ou duas frases.
+
+== COMPLEMENTOS
+- Conteúdo complementar 1 (ex.: alfabeto e nomes das letras)
+- Conteúdo complementar 2
+
+MÉTODO (siga nesta ordem): 1) input compreensível — um TEXTO curto e/ou um AUDIO (diálogo) no nível pedido, com 6–12 palavras-chave destacadas como {palavra|significado}; 2) GRAMATICA explícita e curta sobre os tópicos gramaticais pedidos, com exemplos tirados do texto; 3) VOCAB com 8–15 palavras do texto (com exemplo e tradução); 4) EXERCICIOS variados (10–14), do reconhecimento para a produção: escolha/ouvir → completar/associar → ordenar/escrever/traduzir/ditado; 5) ESCRITA curta com modelo; 6) RESUMO. Use CONJUGACAO, EXPRESSOES, PRONUNCIA ou CULTURA quando fizer sentido. Explicações em português do Brasil; conteúdo no idioma estudado, adequado ao nível (A0 = primeiras palavras e frases prontas; C2 = textos autênticos e nuances).
+
+REGRAS DO FORMATO:
+- Começa com metadados, um por linha: @titulo:, @idioma:, @nivel: (A0, A1, A2, B1, B2, C1, C2 ou extra), @unidade:, @temas: (temas separados por vírgula), @gramatica: (tópicos gramaticais separados por vírgula), @tempo: (minutos), @descricao:.
+- Cada bloco começa com "== TIPO | título". Tipos: TEXTO, AUDIO, GRAMATICA, VOCAB, EXPRESSOES, EXERCICIOS, CONJUGACAO, PRONUNCIA, CULTURA, NOTA, ESCRITA, IMAGEM, VIDEO, RESUMO, LINKS. Pode repetir tipos.
+- Todo TEXTO precisa terminar com "@fonte: nome da obra/autor | link" (ou "@fonte: Texto original" se você escreveu). Não copie trechos longos de obras protegidas por direitos autorais: escreva textos originais ou use obras em domínio público, citando a fonte.
+- TEXTO: parágrafos separados por linha em branco; "~ tradução" logo abaixo de cada parágrafo.
+- AUDIO: uma fala por linha, "Nome: frase = tradução".
+- GRAMATICA/CULTURA/NOTA/RESUMO: texto com **negrito**, *itálico*, "### subtítulo", "- lista", tabelas com | (linha |---| depois do cabeçalho), "> exemplo = tradução", "! dica", "!! atenção".
+- VOCAB: "palavra | tradução | imagem | classe | exemplo = tradução do exemplo | nota" (use - para campo vazio; imagem pode ser um emoji ou link https:// de imagem livre de direitos).
+- EXPRESSOES: "expressão = tradução | nota".
+- CONJUGACAO: "@verbo: infinitivo = tradução", "@tempo: nome do tempo", depois "pronome | forma = tradução".
+- PRONUNCIA: "palavra | [IPA] | dica".
+- ESCRITA: enunciado; "? item de autoavaliação"; "= modelo"; "~ tradução do modelo".
+- EXERCICIOS: cada um começa com [tipo]:
+  [escolha] pergunta + linhas "* certa" e "- errada";
+  [ouvir] frase no idioma + "* tradução certa" e "- erradas";
+  [completar] frase com lacunas [[resposta|alternativa aceita]];
+  [escrever] pergunta + "= resposta | alternativa";
+  [traduzir] frase em português + "= tradução | alternativa";
+  [ordenar] partes na ordem correta separadas por " / " + "~ tradução";
+  [associar] instrução + linhas "a = b";
+  [ditado] frase no idioma;
+  [vf] afirmação + "= verdadeiro" ou "= falso".
+  Opcionais em qualquer exercício: "> explicação", "~ contexto", "? dica".
+```
+
+## 8. Baterias de exercícios (`@tipo: exercicios`)
+
+Aparecem na aba **Exercícios**, com filtros por nível, tópico gramatical e tipo. Use blocos `== EXERCICIOS` (e `== TEXTO` antes, para interpretação de texto). Tipos disponíveis: Interpretação de texto, Conjugar o verbo (tempo verbal), Completar com o pronome, Completar lacunas, Múltipla escolha, Traduzir, Transformar a frase, Corrigir o erro, Ordenar a frase, Associar pares, Ditado, Verdadeiro ou falso.
+
+No app: **Exercícios › Gerar bateria com IA** (ou Estúdio › Prompt para IA › Bateria de exercícios): escolha os tipos, o foco (tópicos gramaticais das suas aulas, um nível inteiro ou geral), a quantidade e detalhes extras. Exemplo de prompt gerado:
+
+```
+Crie uma BATERIA DE EXERCÍCIOS para o meu app de idiomas, no formato de texto abaixo. Responda APENAS com o código, dentro de um único bloco de código, sem comentários antes ou depois.
+
+IDIOMA: fr (Francês) — use @idioma: fr
+FOCO: TÓPICO(S) GRAMATICAL(IS): passé composé — no nível A2.
+TIPOS DE EXERCÍCIO: Interpretação de texto, Conjugar o verbo (tempo verbal), Completar com o pronome
+QUANTIDADE: cerca de 20 questões no total, bem distribuídas entre os tipos (as perguntas de interpretação contam).
+
+QUALIDADE
+- Toda questão treina o foco pedido, com frases naturais, corretas e adequadas ao nível, em contextos variados do dia a dia.
+- Do mais fácil ao mais difícil. Não repita frases nem estruturas.
+- TODA questão tem uma explicação curta em português na linha "> …" (por que a resposta é essa; nos erros, a regra).
+- Nas respostas abertas, aceite todas as formas corretas com | (contrações, ordem alternativa). Os acentos fazem parte da resposta.
+- Distratores plausíveis, baseados em erros comuns de falantes de português.
+- Confira cada resposta antes de entregar.
+
+FORMATO
+@tipo: exercicios
+@titulo: (título curto em português, ex.: "Passé composé — conjugação e pronomes")
+@idioma: fr
+@nivel: A2
+@gramatica: passé composé
+@temas: (opcional, 1–3 temas dos contextos usados)
+@tempo: (minutos estimados)
+@descricao: (uma frase sobre o que a bateria treina)
+
+Depois, um bloco "== EXERCICIOS | <nome do tipo>" para cada tipo pedido (ex.: "== EXERCICIOS | Conjugação"), com as questões uma após a outra. Cada questão começa com [tipo] na linha.
+
+SINTAXE DE CADA TIPO PEDIDO
+- Interpretação de texto: Um ou dois textos curtos e originais no nível pedido ("== TEXTO | título", parágrafos com "~ tradução" logo abaixo e "@fonte: Texto original" no fim), cada um seguido de um bloco "== EXERCICIOS | Interpretação" com 4–6 perguntas [escolha] (e [vf], se fizer sentido) sobre o texto.
+- Conjugar o verbo (tempo verbal): [conjugar] frase com a forma verbal certa entre [[ ]] e, logo depois, o infinitivo e o tempo entre parênteses. Ex.: "Hier, nous [[avons mangé]] (manger, passé composé) au restaurant." Formas alternativas aceitas com |.
+- Completar com o pronome: [pronome] frase com o pronome certo entre [[ ]]; aceite variações com |. Ex.: "Tu connais Marie ? Oui, je [[la]] connais." Se ajudar, diga entre parênteses a que ele se refere.
+- Em qualquer questão (opcional): "~ contexto ou tradução" e "? dica". A explicação "> …" é obrigatória.
+
+EXEMPLO DE ESTRUTURA
+@tipo: exercicios
+@titulo: Exemplo
+@idioma: fr
+@nivel: A2
+@gramatica: passé composé
+
+== EXERCICIOS | Conjugação
+[conjugar] Hier soir, je [[suis allée|suis allé]] (aller, passé composé) au cinéma.
+> Aller forma o passé composé com être, e o particípio concorda com o sujeito.
+
+== EXERCICIOS | Múltipla escolha
+[escolha] Nous ___ trop mangé hier.
+* avons
+- sommes
+- avez
+> Manger usa o auxiliar avoir: nous avons mangé.
+```
+
+## 9. Prompt para gerar uma lição com IA
 
 No app: **Estúdio › Prompt para IA** — você preenche idioma, nível, temas e tópicos gramaticais e copia o prompt pronto. Versão com colchetes para preencher à mão:
 

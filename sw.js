@@ -1,8 +1,8 @@
 // Service worker: deixa o app instalável e funcionando offline.
-const CACHE = 'atelier-v3';
+const CACHE = 'atelier-v4';
 const SHELL = ['./', 'index.html', 'css/app.css', 'css/fonts.css', 'fonts/eb-garamond-latin-400-normal.woff2', 'fonts/cormorant-garamond-latin-600-normal.woff2', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png',
   'js/app.js', 'js/config.js', 'js/parser.js', 'js/store.js', 'js/speech.js', 'js/util.js', 'js/data.js',
-  'js/lesson.js', 'js/exercises.js', 'js/cards.js', 'js/studio.js', 'js/modelo.js', 'js/library.js', 'js/tests.js', 'js/voice.js'];
+  'js/lesson.js', 'js/exercises.js', 'js/cards.js', 'js/studio.js', 'js/modelo.js', 'js/library.js', 'js/tests.js', 'js/voice.js', 'js/zip.js', 'js/practice.js'];
 
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {

@@ -19,6 +19,9 @@ export const BLOCK_TYPES = {
   video:      { label: 'Vídeo',         icon: '▷' },
   resumo:     { label: 'Resumo',        icon: '✓' },
   links:      { label: 'Para ir além',  icon: '↗' },
+  objetivos:  { label: 'Objetivos',     icon: '✓' },
+  marco:      { label: 'Marco de conclusão', icon: '⚑' },
+  complementos: { label: 'Conteúdos complementares', icon: '✧' },
 };
 
 const TYPE_ALIASES = {
@@ -37,6 +40,8 @@ const TYPE_ALIASES = {
   video: 'video',
   resumo: 'resumo', revisao: 'resumo',
   links: 'links', recursos: 'links', referencias: 'links',
+  objetivos: 'objetivos', metas: 'objetivos', marco: 'marco', marcodeconclusao: 'marco',
+  complementos: 'complementos', complementares: 'complementos', conteudoscomplementares: 'complementos', conteudos: 'complementos',
 };
 
 const EX_ALIASES = {
@@ -49,12 +54,17 @@ const EX_ALIASES = {
   associar: 'associar', pares: 'associar', ligar: 'associar',
   ditado: 'ditado',
   vf: 'vf', 'verdadeiro-falso': 'vf', 'verdadeiro-ou-falso': 'vf', 'v/f': 'vf',
+  conjugar: 'conjugar', conjugacao: 'conjugar', verbo: 'conjugar', tempo: 'conjugar', 'tempo-verbal': 'conjugar',
+  pronome: 'pronome', pronomes: 'pronome',
+  transformar: 'transformar', reescrever: 'transformar', transformacao: 'transformar',
+  corrigir: 'corrigir', correcao: 'corrigir', erro: 'corrigir',
 };
 
 export const EX_LABELS = {
   escolha: 'Escolha a alternativa', ouvir: 'Ouça e escolha', escrever: 'Escreva',
   traduzir: 'Traduza', completar: 'Complete', ordenar: 'Monte a frase',
   associar: 'Associe os pares', ditado: 'Ditado — ouça e escreva', vf: 'Verdadeiro ou falso?',
+  conjugar: 'Conjugue o verbo', pronome: 'Complete com o pronome', transformar: 'Transforme a frase', corrigir: 'Corrija a frase',
 };
 
 export const LEVELS = ['A0', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -76,7 +86,7 @@ const META_ALIASES = {
   temas: 'temas', tema: 'temas', tags: 'temas', topicos: 'temas',
   tempo: 'tempo', duracao: 'tempo',
   descricao: 'descricao', resumo: 'descricao', objetivo: 'descricao',
-  id: 'id',
+  id: 'id', codigo: 'codigo', code: 'codigo', aula: 'codigo',
 };
 
 export function deaccent(s) {
@@ -127,7 +137,7 @@ export function parseLesson(source, opts = {}) {
   const lines = raw.map((text, i) => ({ text: text.replace(/\s+$/, ''), n: i + 1 }))
     .filter((l) => !/^\s*\/\//.test(l.text));
 
-  const meta = { titulo: '', idioma: 'fr', nivel: '', unidade: '', ordem: null, temas: [], gramatica: [], tempo: null, descricao: '', id: '', tipo: 'licao', autor: '', obra: '', fontes: [] };
+  const meta = { titulo: '', idioma: 'fr', nivel: '', unidade: '', ordem: null, temas: [], gramatica: [], tempo: null, descricao: '', id: '', tipo: 'licao', autor: '', obra: '', fontes: [], codigo: '' };
   const blocks = [];
   let cur = null;
 
@@ -161,7 +171,8 @@ export function parseLesson(source, opts = {}) {
         if (key === 'temas' || key === 'gramatica') meta[key] = [...meta[key], ...val.split(/[,;]/).map((x) => x.trim()).filter(Boolean)];
         else if (key === 'ordem' || key === 'tempo') meta[key] = parseFloat(val.replace(',', '.')) || null;
         else if (key === 'idioma') meta.idioma = val.toLowerCase().slice(0, 5) || 'fr';
-        else if (key === 'tipo') meta.tipo = /^(biblioteca|leitura|library|texto|livro)/.test(keyOf(val)) ? 'biblioteca' : 'licao';
+        else if (key === 'tipo') meta.tipo = /^(biblioteca|leitura|library|texto|livro)/.test(keyOf(val)) ? 'biblioteca' : /^(nivel|level|trilha)/.test(keyOf(val)) ? 'nivel' : /^(exercicio|bateria|lista|pratica|treino)/.test(keyOf(val)) ? 'exercicios' : 'licao';
+        else if (key === 'codigo') meta.codigo = val.replace(/\s+/g, '');
         else meta[key] = val;
       } else warn(l.n, 'Linha fora de qualquer bloco foi ignorada (comece blocos com "== TIPO | título").');
       continue;
@@ -172,7 +183,8 @@ export function parseLesson(source, opts = {}) {
   }
 
   if (opts.titulo) meta.titulo = opts.titulo;
-  if (!meta.titulo) warn(1, 'Lição sem título (use o campo Título ou @titulo:).');
+  if (!meta.titulo && meta.tipo !== 'nivel') warn(1, 'Lição sem título (use o campo Título ou @titulo:).');
+  if (!meta.nivel && meta.codigo) { const m = meta.codigo.toUpperCase().match(/^(A0|A1|A2|B1|B2|C1|C2)/); if (m) meta.nivel = m[1]; }
   if (!meta.nivel && !meta.extra && !warnings.some((w) => /Nível/.test(w.msg))) warn(1, 'Lição sem @nivel: ela vai para "Extras" (use A0–C2, ou "@nivel: extra" para não ver este aviso).');
   if (!blocks.length) warn(1, 'Nenhum bloco encontrado. Comece um bloco com "== TEXTO | título".', 'erro');
 
@@ -192,6 +204,7 @@ export function parseLesson(source, opts = {}) {
   });
   out.forEach((b, i) => (b.idx = i));
 
+  if (meta.tipo === 'exercicios' && !out.some((b) => b.type === 'exercicios')) warn(1, 'Bateria de exercícios sem bloco == EXERCICIOS.', 'erro');
   if (meta.tipo === 'biblioteca' && !out.some((b) => b.type === 'texto')) warn(1, 'Texto da biblioteca sem bloco == TEXTO.', 'erro');
   return { meta, blocks: out, words, warnings, ok: !warnings.some((w) => w.level === 'erro') };
 }
@@ -275,6 +288,9 @@ const PARSERS = {
   cultura(b, warn) { const nodes = parseRich(b.lines, warn); return { nodes, empty: !nodes.length }; },
   nota(b, warn) { const nodes = parseRich(b.lines, warn); return { nodes, empty: !nodes.length }; },
   resumo(b, warn) { const nodes = parseRich(b.lines, warn); return { nodes, empty: !nodes.length }; },
+  objetivos(b, warn) { const nodes = parseRich(b.lines, warn); return { nodes, empty: !nodes.length }; },
+  marco(b, warn) { const nodes = parseRich(b.lines, warn); return { nodes, empty: !nodes.length }; },
+  complementos(b, warn) { const nodes = parseRich(b.lines, warn); return { nodes, empty: !nodes.length }; },
 
   vocab(b, warn, ctx) {
     const items = [];
@@ -414,7 +430,7 @@ function validateEx(ex, warn) {
       if (!ex.options.some((o) => o.ok)) { warn(n, `[${ex.type}] sem alternativa correta (marque com *).`, 'erro'); return false; }
       if (ex.type === 'ouvir' && !ex.prompt) { warn(n, '[ouvir] precisa da frase que será lida.', 'erro'); return false; }
       return true;
-    case 'escrever': case 'traduzir':
+    case 'escrever': case 'traduzir': case 'transformar': case 'corrigir':
       if (!ex.answers.length) { warn(n, `[${ex.type}] sem resposta (= resposta | alternativa).`, 'erro'); return false; }
       ex.accept = ex.answers.flatMap(splitAlts);
       return true;
@@ -422,7 +438,7 @@ function validateEx(ex, warn) {
       if (!ex.prompt) { warn(n, '[ditado] precisa da frase.', 'erro'); return false; }
       ex.accept = ex.answers.length ? ex.answers.flatMap(splitAlts) : [plain(ex.prompt)];
       return true;
-    case 'completar': {
+    case 'completar': case 'conjugar': case 'pronome': {
       // Forma 1: lacunas inline [[resposta|alternativa]]
       const inline = [...ex.prompt.matchAll(/\[\[([^\]]+)\]\]/g)].map((m) => splitAlts(m[1]));
       if (inline.length) {
@@ -513,4 +529,27 @@ export function checkAnswer(given, accepted) {
     if (A.length >= 5 && lev(A, G) <= (A.length > 14 ? 2 : 1)) return { ok: true, exact: false, note: 'Quase! Pequeno erro de digitação.', best: a };
   }
   return { ok: false, exact: false, note: '', best: accepted[0] };
+}
+
+/** Troca (ou cria) uma linha de metadado "@chave: valor" no cabeçalho do código. value vazio remove a linha. */
+export function setMeta(code, key, value) {
+  const lines = String(code || '').replace(/\r\n?/g, '\n').split('\n');
+  const firstBlock = lines.findIndex((l) => /^\s*==/.test(l));
+  const end = firstBlock < 0 ? lines.length : firstBlock;
+  const want = keyOf(key).replace(/-/g, '');
+  const target = META_ALIASES[want] || want;
+  const idx = lines.slice(0, end).findIndex((l) => {
+    const m = l.match(/^\s*@\s*([\wÀ-ÿ\-]+)\s*:/);
+    if (!m) return false;
+    const k = keyOf(m[1]).replace(/-/g, '');
+    return (META_ALIASES[k] || k) === target;
+  });
+  const line = `@${key}: ${value}`;
+  if (idx >= 0) { if (value === '' || value == null) lines.splice(idx, 1); else lines[idx] = line; }
+  else if (value !== '' && value != null) {
+    let at = 0;
+    for (let i = 0; i < end; i++) if (/^\s*@/.test(lines[i])) at = i + 1;
+    lines.splice(at, 0, line);
+  }
+  return lines.join('\n');
 }

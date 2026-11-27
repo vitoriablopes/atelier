@@ -18,7 +18,8 @@ export const META_DOC = [
   ['@gramatica', 'Tópicos gramaticais (passé composé, artigos…), separados por vírgula. Filtro na Trilha.'],
   ['@tempo', 'Duração estimada, em minutos.'],
   ['@descricao', 'Uma frase sobre o objetivo da lição.'],
-  ['@tipo', 'Só para textos da Biblioteca: "@tipo: biblioteca". Sem isso, é uma lição da Trilha.'],
+  ['@codigo', 'Opcional. Código da aula na ementa (ex.: A0.01). Define a ordem dentro do nível e permite substituir a aula ao reimportar.'],
+  ['@tipo', 'Sem isso, é uma lição da Trilha. "biblioteca" = texto da Biblioteca; "exercicios" = bateria de exercícios; "nivel" = arquivo com nome, objetivos e marco de um nível.'],
   ['@autor / @obra', 'Biblioteca: autor(a) e obra de onde o texto foi tirado.'],
   ['@fonte', 'Fonte geral (obra, página, link). Também pode ir dentro de cada bloco TEXTO.'],
 ];
@@ -135,7 +136,7 @@ s'il vous plaît = por favor | formal`,
     explica: ['Uma expressão por linha: "expressão = tradução", e "| nota" se quiser.'],
   },
   exercicios: {
-    titulo: 'EXERCICIOS — prática (9 tipos)',
+    titulo: 'EXERCICIOS — prática (13 tipos)',
     code: `== EXERCICIOS | Prática
 [escolha] Pergunta?
 * alternativa correta
@@ -175,12 +176,25 @@ chaud = quente
 
 [vf] Afirmação sobre o texto.
 = verdadeiro
-> Por quê.`,
+> Por quê.
+
+[conjugar] Hier, nous [[avons mangé]] (manger, passé composé) au restaurant.
+
+[pronome] Tu connais Marie ? Oui, je [[la]] connais.
+
+[transformar] Passe para a negativa: Je mange du pain.
+= Je ne mange pas de pain
+
+[corrigir] Elle a allé au marché.
+= Elle est allée au marché
+> Aller usa o auxiliar être.`,
     explica: [
       'Cada exercício começa com [tipo]. * = alternativa certa, - = errada, = = resposta aceita (várias com |), > = explicação, ~ = contexto, ? = dica.',
       '[completar]: lacunas com [[resposta|alternativa]] dentro da frase, ou ___ com "= resp1 ; resp2" (uma por lacuna, separadas por ;), ou ___ com alternativas * e -.',
       '[ordenar]: escreva as partes NA ORDEM CERTA separadas por / — o app embaralha.',
       '[vf]: = verdadeiro ou = falso.',
+      '[conjugar] e [pronome] funcionam como [completar]: a resposta vai entre [[ ]]; no [conjugar], ponha o infinitivo (e o tempo) entre parênteses depois da lacuna.',
+      '[transformar] e [corrigir] funcionam como [escrever]: instrução/frase na linha e "= resposta | alternativas".',
       'Na correção, o app perdoa maiúsculas, pontuação e apóstrofo; acento faltando ou 1 letra trocada conta como "quase".',
       'Os que a aluna erra voltam no fim do bloco e ficam no Caderno de erros.',
     ],
@@ -345,3 +359,158 @@ ${LIB_TEMPLATE}
 REGRAS GERAIS: metadados no topo, um por linha (@tipo: biblioteca é obrigatório). Cada bloco começa com "== TIPO | título". Linha em branco separa parágrafos. **negrito** e *itálico* são permitidos. Não use { } nem (( )) para outra coisa.`;
 }
 export const LIB_PROMPT = buildLibraryPrompt();
+
+// ---------------------------------------------------------------
+//  Curso inteiro a partir de uma ementa, em lotes, num .zip
+// ---------------------------------------------------------------
+export const LEVEL_TEMPLATE = `@tipo: nivel
+@idioma: fr
+@nivel: A0
+@titulo: Nome do nível (ex.: Primeiros passos)
+@descricao: Uma frase sobre o nível.
+
+== OBJETIVOS
+- O que a aluna consegue fazer ao fim do nível (3–6 itens)
+
+== MARCO
+O marco de conclusão do nível, em uma ou duas frases.
+
+== COMPLEMENTOS
+- Conteúdo complementar 1 (ex.: alfabeto e nomes das letras)
+- Conteúdo complementar 2`;
+
+/** Prompt para a IA gerar várias aulas a partir de uma ementa, em lotes, entregues em .zip. */
+export function buildCoursePrompt(f = {}) {
+  const v = (x, ph) => (x && String(x).trim()) || ph;
+  const lote = Math.max(1, parseInt(f.lote, 10) || 3);
+  const lang = f.idioma ? f.idioma + (f.idiomaNome ? ` (${f.idiomaNome}) — use @idioma: ${f.idioma} em todos os arquivos` : '') : '[código: fr / es / it / de / en / ja…]';
+  return `Você vai montar um CURSO para o meu app de idiomas a partir da ementa abaixo. Cada aula vira um arquivo .txt no formato do app, e os arquivos são entregues em .zip, em LOTES, para manter a qualidade.
+
+IDIOMA: ${lang}
+DURAÇÃO DE CADA AULA: ${v(f.tempo, '20')} minutos
+AULAS POR LOTE: ${lote}
+${f.extra && f.extra.trim() ? `OUTRAS INSTRUÇÕES: ${f.extra.trim()}\n` : ''}
+EMENTA:
+"""
+${v(f.ementa, '[cole aqui a ementa: uma aula por linha, no formato CÓDIGO <tab> TÓPICO GRAMATICAL <tab> TEMA, e depois os conteúdos complementares e o marco de conclusão]')}
+"""
+
+COMO LER A EMENTA
+- Cada linha "CÓDIGO — tópico gramatical — tema" (separados por tab, | ou ;) é UMA aula. O código vai no metadado @codigo e define o nível (A0.03 → @nivel: A0) e a ordem.
+- O tópico gramatical da linha é o foco da GRAMATICA da aula e vai em @gramatica. O tema da linha guia o texto, o diálogo e o vocabulário e vai em @temas (2–4 palavras-chave).
+- "Conteúdos complementares" (ex.: pronúncia) devem ser TODOS cobertos ao longo das aulas, em ordem lógica, 1 ou 2 por aula, sem tomar o lugar da gramática principal (use o bloco PRONUNCIA, NOTA ou CULTURA para eles).
+- "Marco de conclusão" é o objetivo final do nível: as aulas devem convergir para ele${f.revisao !== false ? ', e a aula de revisão final treina exatamente esse marco' : ''}.
+
+ETAPA 1 — PLANO${f.plano !== false ? ' (faça isto primeiro e ESPERE meu "ok" antes de escrever as aulas)' : ' (faça e já siga para os lotes)'}
+Responda com uma tabela: código | título (curto, no idioma estudado) | gramática | tema | conteúdo complementar da aula | 8–15 palavras novas principais | gênero do texto/diálogo. Garanta progressão real: cada aula só usa a gramática já vista ou a da própria aula; o vocabulário das aulas anteriores é reciclado; nenhuma palavra nova se repete como "nova" em duas aulas. Diga como as aulas ficarão divididas em lotes de ${lote}.
+
+ETAPA 2 — LOTES
+- Para cada lote, crie um arquivo .zip para download chamado "curso-<idioma>-<nível>-lote<N>.zip", com UM arquivo .txt (UTF-8) por aula, nomeado "<código>-<slug-do-título>.txt" (ex.: A0.01-salutations.txt). Sem pastas dentro do zip.
+${f.nivel !== false ? '- No PRIMEIRO lote, inclua também o arquivo do nível, "_nivel-<idioma>-<nível>.txt", no formato de nível abaixo (objetivos, marco de conclusão e conteúdos complementares tirados da ementa).\n' : ''}${f.revisao !== false ? '- No ÚLTIMO lote, inclua uma aula de revisão do nível, código "<nível>.R" (ex.: A0.R), que retoma toda a gramática e o vocabulário do nível e termina com uma ESCRITA que cumpre o marco de conclusão.\n' : ''}- Depois de cada lote, liste as aulas entregues e pare. Continue só quando eu disser "próximo".
+- Se você NÃO conseguir criar arquivos, entregue cada aula em um bloco de código separado, cada um precedido da linha exata
+  ===== ARQUIVO: <nome-do-arquivo>.txt =====
+  (o app importa colando o texto inteiro assim).
+- Se precisar corrigir uma aula depois, gere de novo o arquivo com o MESMO @codigo: o app substitui a antiga.
+
+QUALIDADE — igual à de uma aula feita sozinha
+- Não encurte, não resuma e não simplifique as aulas por estarem em lote. Cada aula deve ser completa por si só.
+- Se o lote ficar grande demais para manter essa qualidade, entregue menos aulas naquele lote e avise.
+- Confira cada arquivo antes de entregar: metadados completos, blocos com "== TIPO | título", exercícios com resposta, fonte em todo TEXTO, e nada fora do formato.
+
+METADADOS DE CADA AULA (no topo do arquivo, um por linha)
+@titulo: (curto, no idioma estudado)
+@codigo: (o código da ementa, ex.: A0.01)
+@idioma: ${f.idioma || '<código>'}
+@nivel: (do código, ex.: A0)
+@unidade: (opcional — só se a ementa agrupar aulas; senão omita)
+@temas: (2–4 palavras-chave do tema da linha, separadas por vírgula)
+@gramatica: (o tópico gramatical da linha, resumido — a vírgula separa tópicos diferentes, então não liste exemplos aqui; ex.: "pronomes pessoais sujeitos")
+@tempo: ${v(f.tempo, '20')}
+@descricao: (uma frase sobre o objetivo da aula)
+
+FORMATO DO ARQUIVO DE NÍVEL
+${LEVEL_TEMPLATE}
+
+${PROMPT_RULES}`;
+}
+export const COURSE_PROMPT = buildCoursePrompt();
+
+// ---------------------------------------------------------------
+//  Baterias de exercícios
+// ---------------------------------------------------------------
+export const EX_KINDS = {
+  interpretacao: { nome: 'Interpretação de texto', regra: 'Um ou dois textos curtos e originais no nível pedido ("== TEXTO | título", parágrafos com "~ tradução" logo abaixo e "@fonte: Texto original" no fim), cada um seguido de um bloco "== EXERCICIOS | Interpretação" com 4–6 perguntas [escolha] (e [vf], se fizer sentido) sobre o texto.' },
+  conjugar: { nome: 'Conjugar o verbo (tempo verbal)', regra: '[conjugar] frase com a forma verbal certa entre [[ ]] e, logo depois, o infinitivo e o tempo entre parênteses. Ex.: "Hier, nous [[avons mangé]] (manger, passé composé) au restaurant." Formas alternativas aceitas com |.' },
+  pronome: { nome: 'Completar com o pronome', regra: '[pronome] frase com o pronome certo entre [[ ]]; aceite variações com |. Ex.: "Tu connais Marie ? Oui, je [[la]] connais." Se ajudar, diga entre parênteses a que ele se refere.' },
+  completar: { nome: 'Completar lacunas', regra: '[completar] frase com uma ou mais lacunas [[resposta|alternativa]].' },
+  escolha: { nome: 'Múltipla escolha', regra: '[escolha] pergunta ou frase com ___, depois "* certa" e 2–3 "- erradas" (distratores plausíveis, de erros típicos de brasileiros).' },
+  traduzir: { nome: 'Traduzir', regra: '[traduzir] frase em português e "= tradução | outras traduções corretas".' },
+  transformar: { nome: 'Transformar a frase', regra: '[transformar] instrução + frase (ex.: "Passe para a negativa: Je mange du pain.") e "= resposta | alternativas".' },
+  corrigir: { nome: 'Corrigir o erro', regra: '[corrigir] frase com UM erro do foco pedido e "= frase corrigida | alternativas"; a explicação ("> …") diz qual era o erro.' },
+  ordenar: { nome: 'Ordenar a frase', regra: '[ordenar] partes da frase NA ORDEM CERTA separadas por " / " e "~ tradução".' },
+  associar: { nome: 'Associar pares', regra: '[associar] instrução e 4–6 linhas "a = b".' },
+  ditado: { nome: 'Ditado', regra: '[ditado] frase no idioma (o app lê e a aluna escreve).' },
+  vf: { nome: 'Verdadeiro ou falso', regra: '[vf] afirmação e "= verdadeiro" ou "= falso".' },
+};
+
+/** Prompt para a IA gerar uma bateria de exercícios. */
+export function buildExercisePrompt(f = {}) {
+  const tipos = (f.tipos?.length ? f.tipos : ['conjugar', 'escolha']).filter((t) => EX_KINDS[t]);
+  const lang = f.idioma ? f.idioma + (f.idiomaNome ? ` (${f.idiomaNome}) — use @idioma: ${f.idioma}` : '') : '[código do idioma]';
+  const topicos = (f.topicos || []).filter(Boolean);
+  const foco = f.escopo === 'geral'
+    ? 'GERAL — revisão de gramática e vocabulário de vários níveis, das questões mais fáceis para as mais difíceis.'
+    : f.escopo === 'nivel'
+      ? `REVISÃO GERAL DO NÍVEL ${f.nivel || '[nível]'} — os principais pontos de gramática e vocabulário típicos desse nível, bem distribuídos.`
+      : `TÓPICO(S) GRAMATICAL(IS): ${topicos.length ? topicos.join('; ') : '[escreva o tópico]'} — no nível ${f.nivel || '[nível]'}.`;
+  const nivelMeta = f.escopo === 'geral' ? 'extra' : f.nivel || '<nível>';
+  const gramMeta = f.escopo === 'topico' && topicos.length ? topicos.join(', ') : f.escopo === 'nivel' ? `revisão ${f.nivel || ''}`.trim() : 'revisão geral';
+  return `Crie uma BATERIA DE EXERCÍCIOS para o meu app de idiomas, no formato de texto abaixo. Responda APENAS com o código, dentro de um único bloco de código, sem comentários antes ou depois.
+
+IDIOMA: ${lang}
+FOCO: ${foco}
+TIPOS DE EXERCÍCIO: ${tipos.map((t) => EX_KINDS[t].nome).join(', ')}
+QUANTIDADE: cerca de ${f.quantidade || 20} questões no total, bem distribuídas entre os tipos${tipos.includes('interpretacao') ? ' (as perguntas de interpretação contam)' : ''}.
+${f.detalhes && f.detalhes.trim() ? `DETALHES: ${f.detalhes.trim()}\n` : ''}
+QUALIDADE
+- Toda questão treina o foco pedido, com frases naturais, corretas e adequadas ao nível, em contextos variados do dia a dia.
+- Do mais fácil ao mais difícil. Não repita frases nem estruturas.
+- TODA questão tem uma explicação curta em português na linha "> …" (por que a resposta é essa; nos erros, a regra).
+- Nas respostas abertas, aceite todas as formas corretas com | (contrações, ordem alternativa). Os acentos fazem parte da resposta.
+- Distratores plausíveis, baseados em erros comuns de falantes de português.
+- Confira cada resposta antes de entregar.
+
+FORMATO
+@tipo: exercicios
+@titulo: (título curto em português, ex.: "Passé composé — conjugação e pronomes")
+@idioma: ${f.idioma || '<código>'}
+@nivel: ${nivelMeta}
+@gramatica: ${gramMeta}
+@temas: (opcional, 1–3 temas dos contextos usados)
+@tempo: (minutos estimados)
+@descricao: (uma frase sobre o que a bateria treina)
+
+Depois, um bloco "== EXERCICIOS | <nome do tipo>" para cada tipo pedido (ex.: "== EXERCICIOS | Conjugação"), com as questões uma após a outra. Cada questão começa com [tipo] na linha.
+
+SINTAXE DE CADA TIPO PEDIDO
+${tipos.map((t) => `- ${EX_KINDS[t].nome}: ${EX_KINDS[t].regra}`).join('\n')}
+- Em qualquer questão (opcional): "~ contexto ou tradução" e "? dica". A explicação "> …" é obrigatória.
+
+EXEMPLO DE ESTRUTURA
+@tipo: exercicios
+@titulo: Exemplo
+@idioma: fr
+@nivel: A2
+@gramatica: passé composé
+
+== EXERCICIOS | Conjugação
+[conjugar] Hier soir, je [[suis allée|suis allé]] (aller, passé composé) au cinéma.
+> Aller forma o passé composé com être, e o particípio concorda com o sujeito.
+
+== EXERCICIOS | Múltipla escolha
+[escolha] Nous ___ trop mangé hier.
+* avons
+- sommes
+- avez
+> Manger usa o auxiliar avoir: nous avons mangé.`;
+}

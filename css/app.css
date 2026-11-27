@@ -566,3 +566,12 @@ pre.ref { font-family: var(--mono); font-size: 13px; line-height: 1.55; backgrou
 @keyframes pulse { 50% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--rose) 60%, transparent); } }
 .rec-words { font-size: 1.15rem; margin: 6px 0; }
 .rec-words .hit { color: var(--ok); } .rec-words .miss { color: var(--bad); text-decoration: underline wavy; }
+
+.dropzone { border: 1.5px dashed var(--line2); border-radius: var(--r); padding: 14px; text-align: center; margin-bottom: 18px; transition: all .2s; }
+.dropzone.on { border-color: var(--rose-d); background: color-mix(in srgb, var(--rose) 35%, transparent); color: var(--ink); }
+.t-objetivos .ic, .chip.t-objetivos { background: var(--sage); } .t-marco .ic, .chip.t-marco { background: var(--rose); } .t-complementos .ic, .chip.t-complementos { background: var(--butter); }
+.level-head-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: -4px 0 12px; }
+.marco { margin: 8px 0 4px; padding: 10px 14px; border-radius: var(--r-sm); background: color-mix(in srgb, var(--rose) 45%, transparent); font-style: normal; color: var(--ink); }
+.edit-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); width: 100%; }
+.edit-row .ctrls { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.edit-row select, .edit-row input { padding: 5px 10px; font-size: .88rem; border-radius: 999px; border: 1px solid var(--line2); background: var(--paper); width: auto; }

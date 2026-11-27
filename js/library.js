@@ -76,7 +76,7 @@ export function openReading(v, id, { go }) {
     v.innerHTML = `<div class="reader fade-in mode-${mode}">
       <div class="lesson-top"><button class="icon-btn" data-back title="Voltar">✕</button>
         <div class="seg grow" style="flex:0 1 auto" data-mode>${[['texto', 'Texto'], ['paragrafo', 'Por parágrafo'], ['lado', 'Lado a lado']].map(([k, l]) => `<button data-m="${k}" class="${mode === k ? 'on' : ''}">${l}</button>`).join('')}</div>
-        <div class="grow"></div><button class="btn sm" data-readall>▶ Ouvir</button></div>
+        <div class="grow"></div>${Store.isAdmin ? '<button class="btn ghost sm" data-editme title="Editar texto">✎</button>' : ''}<button class="btn sm" data-readall>▶ Ouvir</button></div>
       <article class="card reader-card">
         <div class="caps muted">${m.nivel ? esc(m.nivel) + ' · ' + esc(LEVEL_NAMES[m.nivel]) : 'Extra'}${m.tempo ? ' · ≈ ' + m.tempo + ' min' : ''}</div>
         <h1 style="margin-top:6px">${esc(L.titulo)}</h1>
@@ -94,6 +94,7 @@ export function openReading(v, id, { go }) {
     outros.forEach((b, i) => { const r = renderBlock(b, ctx); const el = v.querySelector(`[data-ob="${i}"]`); el.innerHTML = r.html; r.mount?.(el); });
     v.querySelectorAll('.gloss').forEach((x) => { const e = !x.classList.contains('gram') && lookup(lang, x.dataset.w); if (e && cardStatus(e.key) !== 'nova') x.classList.add('seen'); });
     v.querySelector('[data-back]').onclick = () => go('#biblioteca');
+    v.querySelector('[data-editme]')?.addEventListener('click', () => go('#estudio', { edit: L.id }));
     v.querySelector('[data-mode]').onclick = (e) => { const b = e.target.closest('[data-m]'); if (b) { mode = b.dataset.m; const y = scrollY; draw(); scrollTo(0, y); } };
     v.querySelector('.reader-card').addEventListener('click', (e) => { const g = e.target.closest('.gloss'); if (g) openGloss(g, lang, L.id); bump(); });
     v.querySelectorAll('[data-savefrase]').forEach((x) => (x.onclick = () => { const [bi, i] = x.dataset.savefrase.split(':').map(Number); const p = textos[bi].paras[i]; pickSentence(p.fr, p.pt, ctx); }));

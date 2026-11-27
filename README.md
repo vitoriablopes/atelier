@@ -50,7 +50,15 @@ O formato completo está em **`MODELO-DE-LICAO.md`** (e dentro do app, em **Est�
    ["01-au-cafe.txt", "02-minha-licao.txt"]
    ```
 3. **Com IA:** *Estúdio › Prompt para IA* — escolha idioma, nível, temas e tópicos gramaticais e copie o prompt pronto para o Claude/ChatGPT.
-4. **Importando:** *Estúdio › Lições › Importar lições* aceita vários arquivos de uma vez (`.txt` de lição ou pacotes `.json`), e você escolhe quais importar.
+4. **Curso inteiro em lotes:** *Estúdio › Prompt para IA › Curso inteiro em lotes (.zip)* — cole a ementa (uma aula por linha: código, gramática, tema), copie o prompt e a IA entrega as aulas em arquivos `.zip`, por lotes.
+5. **Importando:** *Estúdio › Lições › Importar arquivos* aceita vários `.zip`, `.txt` e `.json` de uma vez (ou arraste para a página), e você escolhe quais importar. *Colar lições* aceita várias aulas separadas por `===== ARQUIVO: nome.txt =====`. Uma aula com o mesmo `@codigo` substitui a antiga e mantém o progresso.
+
+### Editar depois
+- Qualquer aula pode ser editada (Estúdio › Lições › Editar, ou o botão ✎ dentro da aula). Aulas que vieram com o site viram uma "versão editada", e *Restaurar original* desfaz.
+- **Trilha › Editar trilha**: mude nível e unidade de cada aula, reordene (↑ ↓ ⤒ ⤓), renomeie unidades e edite nome, objetivos, marco de conclusão e conteúdos complementares de cada nível.
+
+### Exercícios
+Baterias avulsas de exercícios (interpretação de texto, conjugação, pronomes, transformar, corrigir…) ficam na aba **Exercícios**. *Gerar bateria com IA* monta o prompt: você escolhe os tipos, o foco (tópicos gramaticais das suas aulas, um nível ou geral), a quantidade e detalhes. Cole a resposta em *Colar bateria*.
 
 ### Níveis e ordem
 Cada lição tem `@nivel:` (A0, A1, A2, B1, B2, C1, C2 ou `extra`). A Trilha é separada por nível, e lições sem nível vão para **Extras**. Uma lição nova entra no fim do seu nível; para reordenar, use **Trilha › Organizar ordem** ou as setas ↑ ↓ em *Estúdio › Lições*.
@@ -80,7 +88,11 @@ Textos para ler (contos, notícias, poemas…) ficam na aba **Biblioteca**: são
 ### Outros idiomas
 No seletor de idioma (topo da barra lateral, ou do celular) há **Adicionar idioma**. As lições de cada idioma usam `@idioma: es` (ou `it`, `de`, `en`, `ja`…). Cada idioma tem trilha, cartões e dicionário próprios, e o app escolhe sozinho a melhor voz instalada para ele (dá para trocar em *Ajustes › Voz*).
 
-## 5. Estrutura
+## 5. Atualizar o site depois
+
+Para colocar uma versão nova, suba os arquivos novos por cima dos antigos, **menos o `js/config.js`** (ele tem a sua configuração do Firebase). Depois recarregue o app duas vezes.
+
+## 6. Estrutura
 
 ```
 index.html            página do app

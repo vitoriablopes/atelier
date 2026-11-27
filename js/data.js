@@ -7,16 +7,27 @@ const parseCache = new Map();
 export let LESSONS = [];       // todas as lições (todos os idiomas), ordenadas
 export let DICT = new Map();   // key → entrada
 
+export let LEVEL_DOCS = new Map(); // "lang|nivel" → lição do tipo nivel (nome, objetivos, marco, complementos)
+
 export function rebuild() {
-  const all = [...Object.values(Store.lessons.arquivo), ...Object.values(Store.lessons.local), ...Object.values(Store.lessons.nuvem)];
-  LESSONS = all.map((L) => {
+  // Mesma id em mais de um lugar: nuvem > aparelho > arquivo do site (a versão editada vence a original).
+  const byId = new Map();
+  for (const src of ['arquivo', 'local', 'nuvem']) for (const L of Object.values(Store.lessons[src])) {
+    const prev = byId.get(L.id);
+    byId.set(L.id, { ...L, original: prev?.original || (prev?.origem === 'arquivo' ? prev : null) });
+  }
+  const all = [...byId.values()];
+  const parsedAll = all.map((L) => {
     const ck = L.id + '|' + (L.atualizado || 0) + '|' + (L.codigo || '').length + '|' + (L.titulo || '');
     let parsed = parseCache.get(ck);
     if (!parsed) { parsed = parseLesson(L.codigo || '', { titulo: L.titulo || '' }); parseCache.set(ck, parsed); }
     const ordem = Store.order[L.id] ?? L.ordem ?? parsed.meta.ordem ?? (L.posicao != null ? 500 + L.posicao : 900);
-    return { ...L, parsed, meta: parsed.meta, titulo: parsed.meta.titulo || L.titulo || 'Sem título', lang: parsed.meta.idioma || 'fr', nivel: parsed.meta.nivel || '', tipo: parsed.meta.tipo || 'licao', ordem };
-  }).filter((L) => L.parsed.blocks.length)
-    .sort((a, b) => levelIndex(a.nivel) - levelIndex(b.nivel) || a.ordem - b.ordem || a.titulo.localeCompare(b.titulo, 'pt'));
+    return { ...L, parsed, meta: parsed.meta, titulo: parsed.meta.titulo || L.titulo || 'Sem título', lang: parsed.meta.idioma || 'fr', nivel: parsed.meta.nivel || '', tipo: parsed.meta.tipo || 'licao', codigoAula: parsed.meta.codigo || '', ordem };
+  });
+  LEVEL_DOCS = new Map();
+  parsedAll.filter((L) => L.tipo === 'nivel').forEach((L) => LEVEL_DOCS.set(L.lang + '|' + L.nivel, L));
+  LESSONS = parsedAll.filter((L) => L.tipo !== 'nivel' && L.parsed.blocks.length)
+    .sort((a, b) => levelIndex(a.nivel) - levelIndex(b.nivel) || a.ordem - b.ordem || byCode(a, b) || a.titulo.localeCompare(b.titulo, 'pt'));
 
   DICT = new Map();
   for (const L of LESSONS) {
@@ -41,7 +52,24 @@ export function rebuild() {
 }
 
 /** Lições da trilha (sem os textos da biblioteca). */
-export const lessonsOf = (lang) => LESSONS.filter((L) => L.lang === lang && L.tipo !== 'biblioteca');
+export const byCode = (a, b) => (a.codigoAula && b.codigoAula ? a.codigoAula.localeCompare(b.codigoAula, 'pt', { numeric: true }) : a.codigoAula ? -1 : b.codigoAula ? 1 : 0);
+export const levelDocs = () => [...LEVEL_DOCS.values()];
+/** Informações do nível: nome, objetivos, marco e complementos (do arquivo de nível, se houver). */
+export function levelInfoOf(lang, lv) {
+  const D = LEVEL_DOCS.get(lang + '|' + lv);
+  const listOf = (type) => (D?.parsed.blocks.filter((b) => b.type === type) || []).flatMap((b) => b.nodes.flatMap((n) => (n.k === 'list' ? n.items : n.k === 'p' ? [n.lines.join(' ')] : n.text ? [n.text] : [])));
+  const goals = listOf('objetivos');
+  return {
+    doc: D || null,
+    nome: D?.meta.titulo || '',
+    descricao: D?.meta.descricao || '',
+    objetivos: goals.length ? goals : LEVEL_GOALS[lv] || [],
+    marco: listOf('marco').join(' '),
+    complementos: listOf('complementos'),
+  };
+}
+export const lessonsOf = (lang) => LESSONS.filter((L) => L.lang === lang && L.tipo === 'licao');
+export const batteriesOf = (lang) => LESSONS.filter((L) => L.lang === lang && L.tipo === 'exercicios');
 export const libraryOf = (lang) => LESSONS.filter((L) => L.lang === lang && L.tipo === 'biblioteca');
 export const levelsOf = (lang) => [...new Set(lessonsOf(lang).map((L) => L.nivel))].sort((a, b) => levelIndex(a) - levelIndex(b));
 
@@ -69,7 +97,7 @@ export async function moveLesson(id, dir) {
   list.forEach((x, k) => { changes[x.id] = k + 1; });
   await saveOrder(changes);
 }
-export const lessonById = (id) => LESSONS.find((L) => L.id === id);
+export const lessonById = (id) => LESSONS.find((L) => L.id === id) || [...LEVEL_DOCS.values()].find((L) => L.id === id);
 export const dictOf = (lang) => [...DICT.values()].filter((e) => e.lang === lang);
 /** Idiomas do app: os que a pessoa escolheu estudar + os que têm lições. */
 export const languages = () => [...new Set([...(Store.state.perfil?.idiomas || []), ...LESSONS.map((L) => L.lang)])];

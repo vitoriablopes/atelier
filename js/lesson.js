@@ -122,7 +122,7 @@ const BLOCKS = {
     };
   },
 
-  gramatica: rich, cultura: rich, nota: rich, resumo: rich,
+  gramatica: rich, cultura: rich, nota: rich, resumo: rich, objetivos: rich, marco: rich, complementos: rich,
 
   vocab(b, ctx) {
     const html = `<p class="muted small" style="margin-top:-6px">Toque no cartão para virar.${ctx.preview ? '' : ' Ao continuar, estas palavras entram na sua revisão.'}</p>
@@ -250,7 +250,7 @@ const BLOCKS = {
       html: `<div data-ex></div>`,
       mount(el) {
         const own = b.items.map((it) => ({ ...it, _id: exId(ctx.lesson, b, it), _lid: ctx.lesson.id }));
-        const extra = ctx.lesson ? pickMixed(ctx.lang, own.length >= 4 ? 2 : 1, { exclude: ctx.lesson.id }) : [];
+        const extra = ctx.lesson && !ctx.noMix && ctx.lesson.tipo !== 'exercicios' ? pickMixed(ctx.lang, own.length >= 4 ? 2 : 1, { exclude: ctx.lesson.id }) : [];
         const r = runExercises(el.querySelector('[data-ex]'), [...own, ...extra], {
           lang: ctx.lang,
           onAnswer: (it, ok, given) => { recordEx(it._id, ok); if (!ok) recordError(it, given, ctx); else clearError(it, ctx); },
@@ -267,7 +267,7 @@ function rich(b, ctx) { return { html: `<div class="rich">${richHtml(b.nodes, ct
 export function exAnswerSummary(it) {
   switch (it.type) {
     case 'escolha': case 'ouvir': return '✓ ' + esc(it.options.filter((o) => o.ok).map((o) => plain(o.text)).join(' / '));
-    case 'completar': return '✓ ' + esc(it.blanks.map((b) => b.join(' | ')).join(' ; '));
+    case 'completar': case 'conjugar': case 'pronome': return '✓ ' + esc(it.blanks.map((b) => b.join(' | ')).join(' ; '));
     case 'ordenar': return '✓ ' + esc(it.tokens.join(' '));
     case 'associar': return esc(it.pairs.map((p) => p.join(' = ')).join(' · '));
     case 'vf': return '✓ ' + (it.truth ? 'verdadeiro' : 'falso');
@@ -428,7 +428,7 @@ export function openLesson(view, id, { go }) {
     const m = L.meta;
     const feitos = new Set(p?.feitos || []);
     view.innerHTML = `<div class="lesson-shell fade-in">
-      <div class="lesson-top"><button class="icon-btn" data-close title="Voltar">✕</button><div class="grow"></div></div>
+      <div class="lesson-top"><button class="icon-btn" data-close title="Voltar">✕</button><div class="grow"></div>${Store.isAdmin ? '<button class="btn sm" data-editme>✎ Editar aula</button>' : ''}</div>
       <div class="card block-card stack">
         <div class="caps muted">${m.nivel ? esc(m.nivel) + ' · ' + esc(LEVEL_NAMES[m.nivel]) : 'Lição extra'}${m.unidade ? ' · ' + esc(m.unidade) : ''}</div>
         <h1>${esc(L.titulo)}</h1>
@@ -446,6 +446,7 @@ export function openLesson(view, id, { go }) {
         ${p?.status === 'concluida' ? `<p class="small muted" style="text-align:right;margin:0">Concluída em ${fmtDate(p.concluidaEm)}${p.melhor != null ? ` · melhor resultado ${p.melhor}%` : ''}</p>` : ''}
       </div></div>`;
     view.querySelector('[data-close]').onclick = () => go('#trilha');
+    view.querySelector('[data-editme]')?.addEventListener('click', () => go('#estudio', { edit: L.id }));
     view.querySelectorAll('[data-jump]').forEach((x) => (x.onclick = () => { S.i = +x.dataset.jump; render(); }));
     view.querySelector('[data-go]').onclick = (e) => { S.i = +e.target.dataset.go; render(); };
     view.querySelector('[data-restart]')?.addEventListener('click', () => { setLessonProg(L.id, { feitos: [], passo: 0 }); S.i = 0; render(); });

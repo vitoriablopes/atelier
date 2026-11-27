@@ -133,6 +133,10 @@ const RENDER = {
     };
   },
 
+  conjugar(body, it, ctx) { return RENDER.completar(body, it, ctx); },
+  pronome(body, it, ctx) { return RENDER.completar(body, it, ctx); },
+  transformar(body, it, ctx) { return typed(body, it, ctx, false); },
+  corrigir(body, it, ctx) { return typed(body, it, ctx, false); },
   completar(body, it, ctx) {
     const parts = it.text.split(/\[\[(\d+)\]\]/);
     let html = '';
